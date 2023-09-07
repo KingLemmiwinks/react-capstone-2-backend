@@ -19,6 +19,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 debug = DebugToolbarExtension(app)
 
 connect_db(app)
+db.create_all()
 
 ############################## AUTH ROUTES ##############################
 
