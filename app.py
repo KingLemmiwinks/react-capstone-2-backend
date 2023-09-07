@@ -1,4 +1,5 @@
 import os
+import pydoc
 from flask import Flask, session, flash, g, request, json
 from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, User, UserHousehold, Household, SellerExpertise, OwnershipOccupancy, Associations, Roof, Basement, RoleType, FrequencyType, AssociationType
@@ -19,7 +20,11 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 debug = DebugToolbarExtension(app)
 
 connect_db(app)
-db.create_all()
+# db.create_all()
+filepath = "capstone-seed.sql"
+cursor = db.cursor()
+with open (filepath, 'rt') as sql_file:
+    cursor.execute(sql_file.read())
 
 ############################## AUTH ROUTES ##############################
 
