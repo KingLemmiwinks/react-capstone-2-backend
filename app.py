@@ -9,7 +9,8 @@ CURR_USER_KEY = "curr_user"
 app = Flask(__name__)
 app.app_context().push()
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://ikutdzmyyrgrzr:b3724cf152c912547d5f304ae3ec438634cd6d6ab1289e92c5134dfd46bce8b0@ec2-52-45-200-167.compute-1.amazonaws.com:5432/dfh6rk16a5so1v'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://ikutdzmyyrgrzr:b3724cf152c912547d5f304ae3ec438634cd6d6ab1289e92c5134dfd46bce8b0@ec2-52-45-200-167.compute-1.amazonaws.com:5432/dfh6rk16a5so1v'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://react-capstone-2-server.postgres.database.azure.com:5432/?user=zdxwzdpipf&password=86115U3E8LC6G72N$&sslmode=require&dbname=react=capstone-2-database'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
