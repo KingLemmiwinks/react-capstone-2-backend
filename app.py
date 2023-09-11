@@ -19,6 +19,8 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['CORS_HEADERS'] = 'Content-Type'
 debug = DebugToolbarExtension(app)
 
+# SECRET_KEY = 'supersecret'
+
 connect_db(app)
 # db.create_all()
 
@@ -119,7 +121,7 @@ def logout():
 
 @app.route("/api/user", methods=["GET", "OPTIONS"])
 def getCurrentUser():
-    print(request.args)
+    print("ARGS: " + request.args.get("userId"))
 
     userId = request.args.get("userId")
     
@@ -143,7 +145,7 @@ def row2dict(r):
 
 @app.route("/api/households", methods=["GET", "OPTIONS"])
 def getUserHouseholds():
-    print(request.args)
+    print("ARGS: " + request.args)
 
     userId = request.args.get("userId")
     
@@ -167,7 +169,7 @@ def getUserHouseholds():
 
 @app.route("/api/household", methods=["GET", "OPTIONS"])
 def getHousehold():
-    print(request.args)
+    print("ARGS: " + request.args)
 
     householdId = request.args.get("householdId")
     
@@ -183,7 +185,7 @@ def getHousehold():
 
 @app.route("/api/household", methods=["POST", "OPTIONS"])
 def createHousehold():
-    print(request.json)
+    print("ARGS: " + request.json)
     
     if not g.user:
         flash("Access unauthorized.", "danger")
@@ -263,7 +265,7 @@ def deleteHousehold():
 
 @app.route("/api/sellerExpertise", methods=["GET", "OPTIONS"])
 def getSellerExpertise():
-    print(request.args)
+    print("ARGS: " + request.args)
 
     householdId = request.args.get("householdId")
     
@@ -334,7 +336,7 @@ def createSellerExpertise():
 
 @app.route("/api/ownershipOccupancy", methods=["GET", "OPTIONS"])
 def getOwnershipOccupancy():
-    print(request.args)
+    print("ARGS: " + request.args)
 
     householdId = request.args.get("householdId")
     
@@ -412,7 +414,7 @@ def createOwnershipOccupancy():
 
 @app.route("/api/associations", methods=["GET", "OPTIONS"])
 def getAssociations():
-    print(request.args)
+    print("ARGS: " +request.args)
 
     householdId = request.args.get("householdId")
     
@@ -488,7 +490,7 @@ def createAssociations():
 
 @app.route("/api/roof", methods=["GET", "OPTIONS"])
 def getRoof():
-    print(request.args)
+    print("ARGS: " +request.args)
 
     householdId = request.args.get("householdId")
     
@@ -566,7 +568,7 @@ def createRoof():
 
 @app.route("/api/basement", methods=["GET", "OPTIONS"])
 def getBasement():
-    print(request.args)
+    print("ARGS: " +request.args)
 
     householdId = request.args.get("householdId")
     
@@ -644,7 +646,7 @@ def createBsement():
 
 @app.route("/api/roleType", methods=["GET", "OPTIONS"])
 def getRoleType():
-    print(request.args)
+    print("ARGS: " +request.args)
 
     roleTypeID = request.args.get("roleTypeId")
     
@@ -660,7 +662,7 @@ def getRoleType():
 
 @app.route("/api/frequencyType", methods=["GET", "OPTIONS"])
 def getFrequencyType():
-    print(request.args)
+    print("ARGS: " +request.args)
 
     frequencyTypeID = request.args.get("frequencyTypeId")
     
@@ -676,7 +678,7 @@ def getFrequencyType():
 
 @app.route("/api/associationType", methods=["GET", "OPTIONS"])
 def getAssociationType():
-    print(request.args)
+    print("ARGS: " +request.args)
 
     associationTypeID = request.args.get("associationTypeId")
     
