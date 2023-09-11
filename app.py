@@ -24,9 +24,22 @@ connect_db(app)
 
 ############################## AUTH ROUTES ##############################
 
+def do_login(user):
+    """Log a user in."""
+    print("CURR_USER_KEY: " + CURR_USER_KEY)
+    session[CURR_USER_KEY] = user.id
+    print("User.id: " + user.id)
+
+def do_logout():
+    """Log a user out."""
+
+    if CURR_USER_KEY in session:
+        del session[CURR_USER_KEY]
+
 @app.before_request
 def add_user_to_g():
     """If we are logged in, add curr_user to Flask global."""
+    print("Session: " + str(session))
 
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
@@ -41,20 +54,6 @@ def after_request(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Methods'] = '*'
     return response       
-
-def do_login(user):
-    """Log a user in."""
-
-    session[CURR_USER_KEY] = user.id
-    print(user.id)
-
-def do_logout():
-    """Log a user out."""
-
-    if CURR_USER_KEY in session:
-        del session[CURR_USER_KEY]
-
-
 
 @app.route("/api/register", methods=["GET", "POST", "OPTIONS"])
 def register():
