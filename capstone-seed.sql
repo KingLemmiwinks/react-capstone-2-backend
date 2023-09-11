@@ -50,12 +50,14 @@ VALUES (NULL,
 INSERT INTO "associationTypes"("associationTypeName")
     VALUES  ('Condomunium'),
             ('H.O.A.'),
-            ('Cooperative');
+            ('Cooperative'),
+            ('N/A');
 
 INSERT INTO "frequencyTypes"("frequencyTypeName")
     VALUES  ('Monthly'),
             ('Quarterly'),
-            ('Yearly');
+            ('Yearly'),
+            ('N/A');
 
 INSERT INTO roof ("installationDate", "invoicePhoto", "hasBeenReplaced", "hadExistingMaterialRemoved", "hasPreexistingLeaks", "hasRainwaterProblems", notes)
 VALUES (NOW(),

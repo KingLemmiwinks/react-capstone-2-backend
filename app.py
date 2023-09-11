@@ -10,16 +10,14 @@ CURR_USER_KEY = "curr_user"
 app = Flask(__name__)
 app.app_context().push()
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://ikutdzmyyrgrzr:b3724cf152c912547d5f304ae3ec438634cd6d6ab1289e92c5134dfd46bce8b0@ec2-52-45-200-167.compute-1.amazonaws.com:5432/dfh6rk16a5so1v'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://react-capstone-2-dbserver.postgres.database.azure.com:5432/?user=dbadmin&password=Dbpassword#&sslmode=require&dbname=postgres'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') # DEV
+# app.config['SECRET_KEY'] = 'supersecret' # LOCAL
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['CORS_HEADERS'] = 'Content-Type'
 debug = DebugToolbarExtension(app)
-
-# SECRET_KEY = 'supersecret'
 
 connect_db(app)
 # db.create_all()
@@ -32,9 +30,11 @@ def add_user_to_g():
 
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
+        print('g.user added to session: ' + str(g.user))
 
     else:
         g.user = None
+        print('There is no g.user')
 
 @app.after_request
 def after_request(response):
@@ -46,6 +46,7 @@ def do_login(user):
     """Log a user in."""
 
     session[CURR_USER_KEY] = user.id
+    print(user.id)
 
 def do_logout():
     """Log a user out."""
@@ -85,21 +86,23 @@ def register():
 
 @app.route("/api/login", methods=["GET", "POST", "OPTIONS"])
 def login():
+    print('Login start')
     print(request.json)
 
     username = request.json.get("username")
     password = request.json.get("password")
 
     user = User.authenticate(username, password)
-    print("user: " + str(user))
+    # print("user: " + str(user))
 
     if user:
         do_login(user)
+        print(user)
         flash(f"Welcome, {user.username}!", "success")
 
         # Keep User Logged In
         session["user_id"] = user.id
-
+        print(user.id)
         return str(user.id)
 
     else:        
@@ -124,8 +127,10 @@ def getCurrentUser():
     print("ARGS: " + request.args.get("userId"))
 
     userId = request.args.get("userId")
+    print(userId)
     
     if not g.user:
+        print('no g.user')
         flash("Access unauthorized.", "danger")
         return None
     
@@ -145,7 +150,7 @@ def row2dict(r):
 
 @app.route("/api/households", methods=["GET", "OPTIONS"])
 def getUserHouseholds():
-    print("ARGS: " + request.args)
+    print("ARGS: " + str(request.args))
 
     userId = request.args.get("userId")
     
@@ -169,7 +174,7 @@ def getUserHouseholds():
 
 @app.route("/api/household", methods=["GET", "OPTIONS"])
 def getHousehold():
-    print("ARGS: " + request.args)
+    print("ARGS: " + str(request.args))
 
     householdId = request.args.get("householdId")
     
@@ -185,7 +190,7 @@ def getHousehold():
 
 @app.route("/api/household", methods=["POST", "OPTIONS"])
 def createHousehold():
-    print("ARGS: " + request.json)
+    print("ARGS: " + str(request.json))
     
     if not g.user:
         flash("Access unauthorized.", "danger")
@@ -265,7 +270,7 @@ def deleteHousehold():
 
 @app.route("/api/sellerExpertise", methods=["GET", "OPTIONS"])
 def getSellerExpertise():
-    print("ARGS: " + request.args)
+    print("ARGS: " + str(request.args))
 
     householdId = request.args.get("householdId")
     
@@ -336,7 +341,7 @@ def createSellerExpertise():
 
 @app.route("/api/ownershipOccupancy", methods=["GET", "OPTIONS"])
 def getOwnershipOccupancy():
-    print("ARGS: " + request.args)
+    print("ARGS: " + str(request.args))
 
     householdId = request.args.get("householdId")
     
@@ -414,7 +419,7 @@ def createOwnershipOccupancy():
 
 @app.route("/api/associations", methods=["GET", "OPTIONS"])
 def getAssociations():
-    print("ARGS: " +request.args)
+    print("ARGS: " +str(request.args))
 
     householdId = request.args.get("householdId")
     
@@ -490,7 +495,7 @@ def createAssociations():
 
 @app.route("/api/roof", methods=["GET", "OPTIONS"])
 def getRoof():
-    print("ARGS: " +request.args)
+    print("ARGS: " +str(request.args))
 
     householdId = request.args.get("householdId")
     
@@ -568,7 +573,7 @@ def createRoof():
 
 @app.route("/api/basement", methods=["GET", "OPTIONS"])
 def getBasement():
-    print("ARGS: " +request.args)
+    print("ARGS: " +str(request.args))
 
     householdId = request.args.get("householdId")
     
@@ -646,7 +651,7 @@ def createBsement():
 
 @app.route("/api/roleType", methods=["GET", "OPTIONS"])
 def getRoleType():
-    print("ARGS: " +request.args)
+    print("ARGS: " +str(request.args))
 
     roleTypeID = request.args.get("roleTypeId")
     
@@ -662,7 +667,7 @@ def getRoleType():
 
 @app.route("/api/frequencyType", methods=["GET", "OPTIONS"])
 def getFrequencyType():
-    print("ARGS: " +request.args)
+    print("ARGS: " +str(request.args))
 
     frequencyTypeID = request.args.get("frequencyTypeId")
     
@@ -678,7 +683,7 @@ def getFrequencyType():
 
 @app.route("/api/associationType", methods=["GET", "OPTIONS"])
 def getAssociationType():
-    print("ARGS: " +request.args)
+    print("ARGS: " +str(request.args))
 
     associationTypeID = request.args.get("associationTypeId")
     
