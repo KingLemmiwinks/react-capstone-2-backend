@@ -1,5 +1,4 @@
 import os
-import pydoc
 from flask import Flask, session, flash, g, request, json
 from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, User, UserHousehold, Household, SellerExpertise, OwnershipOccupancy, Associations, Roof, Basement, RoleType, FrequencyType, AssociationType
@@ -26,9 +25,7 @@ connect_db(app)
 
 def do_login(user):
     """Log a user in."""
-    print("CURR_USER_KEY: " + CURR_USER_KEY)
     session[CURR_USER_KEY] = user.id
-    print("User.id: " + user.id)
 
 def do_logout():
     """Log a user out."""
@@ -39,7 +36,6 @@ def do_logout():
 @app.before_request
 def add_user_to_g():
     """If we are logged in, add curr_user to Flask global."""
-    print("Session: " + str(session))
 
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
@@ -47,7 +43,6 @@ def add_user_to_g():
 
     else:
         g.user = None
-        print('There is no g.user')
 
 @app.after_request
 def after_request(response):
@@ -92,7 +87,6 @@ def login():
     password = request.json.get("password")
 
     user = User.authenticate(username, password)
-    # print("user: " + str(user))
 
     if user:
         do_login(user)
@@ -112,9 +106,6 @@ def login():
 def logout():
     """Handle user logout."""
 
-    if not g.user:
-        flash("You Are Not Logged In.", "danger")
-
     do_logout()
     flash('You have been logged out.', 'success')
 
@@ -127,12 +118,7 @@ def getCurrentUser():
 
     userId = request.args.get("userId")
     print(userId)
-    
-    if not g.user:
-        print('no g.user')
-        flash("Access unauthorized.", "danger")
-        return None
-    
+        
     # Get user by id
     currentUser = User.query.filter(User.id == userId).one()
 
@@ -152,11 +138,7 @@ def getUserHouseholds():
     print("ARGS: " + str(request.args))
 
     userId = request.args.get("userId")
-    
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+        
     # Get list of households for user
     households = UserHousehold.query\
         .filter(UserHousehold.userID == userId)\
@@ -176,11 +158,7 @@ def getHousehold():
     print("ARGS: " + str(request.args))
 
     householdId = request.args.get("householdId")
-    
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+        
     # Get household by id
     household = Household.query.filter(Household.id == householdId).one()
 
@@ -190,13 +168,10 @@ def getHousehold():
 @app.route("/api/household", methods=["POST", "OPTIONS"])
 def createHousehold():
     print("ARGS: " + str(request.json))
-    
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+        
     # Create new household class
     newHousehold = Household()
+    userId = request.json.get("userId")
     newHousehold.name = request.json.get("name")
     newHousehold.street_address = request.json.get("address")
     newHousehold.city = request.json.get("city")
@@ -210,7 +185,7 @@ def createHousehold():
 
     # Create new record for user household class
     newUserHousehold = UserHousehold()
-    newUserHousehold.userID = g.user.id
+    newUserHousehold.userID = userId
     newUserHousehold.householdID = newHousehold.id
 
     # Add user household to DB
@@ -224,11 +199,7 @@ def createHousehold():
 def updateHousehold():
     print(request.json)
     householdId = request.json.get("id")
-     
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+         
     # Get household by id
     household = Household.query.filter(Household.id == householdId).one()
     
@@ -251,11 +222,7 @@ def deleteHousehold():
 
     print(request.json)
     householdId = request.json.get("householdId")
-     
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+         
     # Get household by id
     household = Household.query.filter(Household.id == householdId).one()
     
@@ -272,11 +239,7 @@ def getSellerExpertise():
     print("ARGS: " + str(request.args))
 
     householdId = request.args.get("householdId")
-    
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+        
     # Get sellerExpertise by id
     # query by house id, if result set has a row, return row. else, return empty {}
 
@@ -293,11 +256,7 @@ def getSellerExpertise():
 def updateSellerExpertise():
     print(request.json)
     householdId = request.json.get("id")
-     
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+         
     # Get sellerExpertise by householdId
     sellerExpertise = SellerExpertise.query.filter(SellerExpertise.id == householdId).one()
     
@@ -316,11 +275,7 @@ def updateSellerExpertise():
 @app.route("/api/sellerExpertise", methods=["POST", "OPTIONS"])
 def createSellerExpertise():
     print(request.json)
-    
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+        
     # Create new seller expertise class
     newSellerExpertise = SellerExpertise()
     newSellerExpertise.householdID = request.json.get("householdId")
@@ -343,11 +298,7 @@ def getOwnershipOccupancy():
     print("ARGS: " + str(request.args))
 
     householdId = request.args.get("householdId")
-    
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+        
     # Get ownershipOccupancy by id
     # query by house id, if result set has a row, return row. else, return empty {}
 
@@ -364,11 +315,7 @@ def getOwnershipOccupancy():
 def updateOwnershipOccupancy():
     print(request.json)
     householdId = request.json.get("id")
-     
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+         
     # Get ownershipOccupancy by id
     ownershipOccupancy = OwnershipOccupancy.query.filter(OwnershipOccupancy.id == householdId).one()
     
@@ -391,11 +338,7 @@ def updateOwnershipOccupancy():
 @app.route("/api/ownershipOccupancy", methods=["POST", "OPTIONS"])
 def createOwnershipOccupancy():
     print(request.json)
-    
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+        
     # Create new ownershipOccupancy class
     newOwnershipOccupancy = OwnershipOccupancy()
     newOwnershipOccupancy.householdID = request.json.get("householdId")
@@ -421,11 +364,7 @@ def getAssociations():
     print("ARGS: " +str(request.args))
 
     householdId = request.args.get("householdId")
-    
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+        
     # Get associations by id
     # query by house id, if result set has a row, return row. else, return empty {}
 
@@ -442,11 +381,7 @@ def getAssociations():
 def updateAssociations():
     print(request.json)
     householdId = request.json.get("id")
-     
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+         
     # Get associations by id
     associations = Associations.query.filter(Associations.id == householdId).one()
     
@@ -468,11 +403,7 @@ def updateAssociations():
 @app.route("/api/associations", methods=["POST", "OPTIONS"])
 def createAssociations():
     print(request.json)
-    
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+        
     # Create new associations class
     newAssociations = Associations()
     newAssociations.householdID = request.json.get("householdId")
@@ -497,11 +428,7 @@ def getRoof():
     print("ARGS: " +str(request.args))
 
     householdId = request.args.get("householdId")
-    
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+        
     # Get roof by id
     # query by house id, if result set has a row, return row. else, return empty {}
 
@@ -518,11 +445,7 @@ def getRoof():
 def updateRoof():
     print(request.json)
     householdId = request.json.get("id")
-     
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+         
     # Get roof by id
     roof = Roof.query.filter(Roof.id == householdId).one()
     
@@ -545,11 +468,7 @@ def updateRoof():
 @app.route("/api/roof", methods=["POST", "OPTIONS"])
 def createRoof():
     print(request.json)
-    
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+        
     # Create new roof class
     newRoof = Roof()
     newRoof.householdID = request.json.get("householdId")
@@ -575,11 +494,7 @@ def getBasement():
     print("ARGS: " +str(request.args))
 
     householdId = request.args.get("householdId")
-    
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+        
     # Get basement by id
     # query by house id, if result set has a row, return row. else, return empty {}
 
@@ -596,11 +511,7 @@ def getBasement():
 def updateBasement():
     print(request.json)
     householdId = request.json.get("id")
-     
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+         
     # Get basement by id
     basement = Basement.query.filter(Basement.id == householdId).one()
     
@@ -623,11 +534,7 @@ def updateBasement():
 @app.route("/api/basement", methods=["POST", "OPTIONS"])
 def createBsement():
     print(request.json)
-    
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+        
     # Create new basement class
     newBasement = Basement()
     newBasement.householdID = request.json.get("householdId")
@@ -653,11 +560,7 @@ def getRoleType():
     print("ARGS: " +str(request.args))
 
     roleTypeID = request.args.get("roleTypeId")
-    
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+        
     # Get roleType by id
 
     roleType = RoleType.query.filter(RoleType.id == roleTypeID).one()
@@ -669,11 +572,7 @@ def getFrequencyType():
     print("ARGS: " +str(request.args))
 
     frequencyTypeID = request.args.get("frequencyTypeId")
-    
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+        
     # Get frequencyType by id
 
     frequencyType = FrequencyType.query.filter(FrequencyType.id == frequencyTypeID).one()
@@ -685,11 +584,7 @@ def getAssociationType():
     print("ARGS: " +str(request.args))
 
     associationTypeID = request.args.get("associationTypeId")
-    
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return None
-    
+        
     # Get associationType by id
 
     associationType = AssociationType.query.filter(AssociationType.id == associationTypeID).one()
